@@ -1,0 +1,39 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: mcp-servers-local
+  namespace: higress-system
+spec:
+  defaultConfig:
+    server:
+      name: quark-search
+      config:
+        searchApiKey: "your-api-key"
+      allowTools:
+        - search_web
+        - search_ai_summary
+  # 使用本地文件路径（需要确保 Higress 能访问到这个路径）
+  url: file:///Users/aias/Work/github/aias00/higress/plugins/wasm-go/mcp-servers/all-in-one/main.wasm
+---
+# 路由配置
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-server-route
+  namespace: higress-system
+  annotations:
+    higress.io/wasm-plugins: |
+      - name: mcp-servers-local
+        namespace: higress-system
+spec:
+  rules:
+    - host: mcp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-backend-service
+                port:
+                  number: 80

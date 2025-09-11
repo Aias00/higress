@@ -1,0 +1,23 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: mcp-servers-all-in-one
+  namespace: higress-system
+spec:
+  defaultConfig:
+    server:
+      # 选择要启用的 MCP Server
+      name: quark-search # 可选：quark-search, amap-tools
+      config:
+        # quark-search 配置
+        searchApiKey: "your-quark-search-api-key"
+        # amap-tools 配置
+        # apiKey: "your-amap-api-key"
+      allowTools:
+        - search_web
+        - search_ai_summary
+        # amap 工具示例
+        # - maps_geo
+        # - maps_regeocode
+  # 使用本地文件路径
+  url: file:///Users/aias/Work/github/aias00/higress/plugins/wasm-go/mcp-servers/all-in-one/main.wasm

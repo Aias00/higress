@@ -1,0 +1,32 @@
+# 这是一个 patch 文件，用于修改 Higress Gateway Deployment
+# 添加 emptyDir 卷和 initContainer 来复制 WASM 文件
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: higress-gateway
+  namespace: higress-system
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: copy-wasm
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Downloading WASM file..."
+              curl -L -o /wasm/main.wasm http://192.168.32.168:8080/all-in-one/main.wasm
+              ls -la /wasm/
+          volumeMounts:
+            - name: wasm-files
+              mountPath: /wasm
+      volumes:
+        - name: wasm-files
+          emptyDir: {}
+      containers:
+        - name: istio-proxy
+          volumeMounts:
+            - name: wasm-files
+              mountPath: /etc/wasm
+              readOnly: true

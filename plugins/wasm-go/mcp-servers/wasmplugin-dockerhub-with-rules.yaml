@@ -1,0 +1,36 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: mcp-servers-dockerhub
+  namespace: higress-system
+spec:
+  defaultConfig:
+    server:
+      # 选择要启用的 MCP Server
+      name: quark-search # 可选：quark-search, amap-tools
+      config:
+        # quark-search 配置
+        searchApiKey: "your-quark-search-api-key"
+        # amap-tools 配置
+        # apiKey: "your-amap-api-key"
+      allowTools:
+        - search_web
+        - search_ai_summary
+        # amap 工具示例
+        # - maps_geo
+        # - maps_regeocode
+  # 添加匹配规则，只对特定 Ingress 生效
+  matchRules:
+    - config:
+        server:
+          name: quark-search
+          config:
+            searchApiKey: "your-quark-search-api-key"
+          allowTools:
+            - search_web
+            - search_ai_summary
+      configDisable: false
+      ingress:
+        - mcp-dockerhub-test # 您的专用 Ingress 名称
+  # 使用 Docker Hub 镜像
+  url: oci://aias00/mcp-all-in-one:latest

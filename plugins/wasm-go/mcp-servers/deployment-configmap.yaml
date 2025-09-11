@@ -1,0 +1,47 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: mcp-servers-configmap
+  namespace: higress-system
+spec:
+  defaultConfig:
+    server:
+      # 选择要启用的 MCP Server
+      name: quark-search # 可选：quark-search, amap-tools
+      config:
+        # quark-search 配置
+        searchApiKey: "your-quark-search-api-key"
+        # amap-tools 配置
+        # apiKey: "your-amap-api-key"
+      allowTools:
+        - search_web
+        - search_ai_summary
+        # amap 工具示例
+        # - maps_geo
+        # - maps_regeocode
+  # 使用 ConfigMap 中的 WASM 文件
+  url: configmap://higress-system/mcp-all-in-one-wasm/main.wasm
+---
+# 为特定路由启用插件
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-route-configmap
+  namespace: higress-system
+  annotations:
+    # 启用 MCP 插件
+    higress.io/wasm-plugins: |
+      - name: mcp-servers-configmap
+        namespace: higress-system
+spec:
+  rules:
+    - host: mcp.example.com # 替换为您的域名
+      http:
+        paths:
+          - path: /mcp
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-backend-service # 替换为您的后端服务名
+                port:
+                  number: 80

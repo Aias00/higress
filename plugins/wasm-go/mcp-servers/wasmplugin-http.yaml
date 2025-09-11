@@ -1,0 +1,23 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: mcp-servers-http
+  namespace: higress-system
+spec:
+  defaultConfig:
+    server:
+      # 选择要启用的 MCP Server
+      name: quark-search # 可选：quark-search, amap-tools
+      config:
+        # quark-search 配置
+        searchApiKey: "your-quark-search-api-key"
+        # amap-tools 配置
+        # apiKey: "your-amap-api-key"
+      allowTools:
+        - search_web
+        - search_ai_summary
+        # amap 工具示例
+        # - maps_geo
+        # - maps_regeocode
+  # 使用 HTTP URL
+  url: http://192.168.32.168:8080/all-in-one/main.wasm
