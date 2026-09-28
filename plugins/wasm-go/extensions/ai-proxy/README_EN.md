@@ -2340,7 +2340,7 @@ providers:
             "index": 0,
             "message": {
                 "role": "assistant",
-                "content": "I am a lagguage model."
+                "content": "I am a language model."
             },
             "finish_reason": "stop",
         }
